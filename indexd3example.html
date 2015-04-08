@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+<script src="https://code.jquery.com/jquery-2.1.3.js"></script>
+	<script>
+
+
+var x = [];
+var y = [];
+var r = [];
+	$.getJSON("https://spreadsheets.google.com/feeds/list/17dsqoL9N4ytNAFWr50m737v0a4V4NbQUZsL0oUUEXkg/od6/public/values?alt=json", function(data) {
+  //first row "rank" column
+  var i=0;
+  while(data.feed.entry[i] !== undefined) {
+	  console.log(data.feed.entry[i]['gsx$x']['$t']);
+	  x.push(data.feed.entry[i]['gsx$x']['$t']);
+	  console.log(data.feed.entry[i]['gsx$y']['$t']);
+	  y.push(data.feed.entry[i]['gsx$y']['$t']);
+	  console.log(data.feed.entry[i]['gsx$r']['$t']);
+	  r.push(data.feed.entry[i]['gsx$r']['$t']);
+  i++;
+  }
+});
+	</script>
+	<title>Document</title>
+</head>
+<body>
+	
+</body>
+</html>

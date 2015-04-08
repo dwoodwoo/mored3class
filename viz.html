@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+	.axis path,
+	.axis line {
+	    fill: none;
+	    stroke: black;
+	    shape-rendering: crispEdges;
+	}
+
+	.axis text {
+	    font-family: sans-serif;
+	    font-size: 11px;
+	}
+</style>
+<body>
+
+<script src="https://code.jquery.com/jquery-2.1.3.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+  <script>
+
+
+myData = [];
+
+var x = [];
+var y = [];
+var r = [];
+
+
+
+
+var margin = {top: 20, right: 20, bottom: 30, left: 30},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+    
+ var xAxisScale = d3.scale.linear()
+    .domain([0, 100])
+    .range([0, width]);
+
+ var yAxisScale = d3.scale.linear()
+    .domain([0, 1])
+    .range([height, 0]);
+
+
+var xAxis = d3.svg.axis()
+  .tickFormat(function(d) { return parseInt(d, 10) + "%"; })
+    .scale(xAxisScale);
+
+var yAxis = d3.svg.axis()
+  .orient("left")
+    .scale(yAxisScale);
+    
+    
+var svg = d3.select("body")
+    .append("svg")
+          .attr("width", width + margin.left + margin.right)
+         .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+          .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var xAxisGroup = svg.append("g")
+    .attr("class", "axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
+
+var yAxisGroup = svg.append("g")
+    .attr("class", "axis")
+    .call(yAxis);
+
+$.getJSON("https://spreadsheets.google.com/feeds/list/17dsqoL9N4ytNAFWr50m737v0a4V4NbQUZsL0oUUEXkg/od6/public/values?alt=json", function(data) {
+  //first row "rank" column
+  var i=0;
+  while(data.feed.entry[i] !== undefined) {
+    console.log(data.feed.entry[i]['gsx$x']['$t']);
+    x.push(parseFloat(data.feed.entry[i]['gsx$x']['$t']));
+    console.log(data.feed.entry[i]['gsx$y']['$t']);
+    y.push(parseFloat(data.feed.entry[i]['gsx$y']['$t']));
+    console.log(data.feed.entry[i]['gsx$r']['$t']);
+    r.push(parseFloat(data.feed.entry[i]['gsx$r']['$t']));
+  i++;
+  }
+
+  (function() {
+    for (var i=0;i<x.length;i++) {
+      myData.push({"x": x[i], "y": y[i], "r": r[i]});
+  }
+  return myData;
+})();
+
+
+console.log("mydata", myData);
+circles = svg
+          .selectAll("circle")
+          .data(myData)
+          .enter()
+          .append("circle")
+            .attr("cx", function(d) {return xAxisScale(d.x)})
+            .attr("cy", function(d) {return yAxisScale(d.y)})
+            .attr("r", function(d) {return d.r})
+            .style("fill", "green")
+
+});
+
+</script>
